@@ -130,6 +130,18 @@ class Model(object):
         except AttributeError:
             return default
 
+    def __getattribute__(self, key):
+        try:
+            return object.__getattribute__(self, key)
+        except AttributeError:
+            try:
+                return object.__getattribute__(self.fields, key)
+            except AttributeError:
+                raise KeyError(key)
+
+    def __setattribute__(self, key, value):
+       setattr(self.fields, key, value)
+
     def __getitem__(self, key):
         try:
             return getattr(self.fields, key)
